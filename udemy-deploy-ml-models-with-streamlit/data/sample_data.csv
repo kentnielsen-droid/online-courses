@@ -1,0 +1,11 @@
+customer_id,customer_name,product_category,purchase_amount,purchase_date,region
+1001,Sarah Johnson,Electronics,1299.99,2024-01-15,North America
+1002,Michael Chen,Clothing,89.50,2024-01-16,Asia
+1003,Emma Rodriguez,Home & Garden,234.75,2024-01-17,Europe
+1004,James Wilson,Electronics,599.00,2024-01-18,North America
+1005,Olivia Brown,Books,45.20,2024-01-19,Europe
+1006,Liam Martinez,Sports & Outdoors,178.30,2024-01-20,South America
+1007,Sophia Davis,Clothing,156.99,2024-01-21,North America
+1008,Noah Anderson,Electronics,2499.99,2024-01-22,Asia
+1009,Ava Taylor,Beauty & Personal Care,67.85,2024-01-23,Europe
+1010,Ethan Thomas,Home & Garden,445.50,2024-01-24,North America
