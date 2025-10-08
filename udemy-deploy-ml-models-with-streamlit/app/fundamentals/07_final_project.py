@@ -65,53 +65,66 @@ with st.form("form_data"):
         )
     with col3:
         st.write("Select region")
-        region = st.selectbox(
-            "Region",
-            options=df.columns[1:-2].tolist(),
-            index=0
+        region = st.selectbox("Region", options=df.columns[1:-2].tolist(), index=0)
+
+if submitted:
+    temp_df = df.copy()
+
+    start_exists = any((temp_df["Year"] == start_year) & (temp_df["Q"] == start_quarter))
+    end_exists = any((temp_df["Year"] == end_year) & (temp_df["Q"] == end_quarter))
+
+    if not start_exists:
+        st.error(
+            f"Error: The start date {start_year}-{start_quarter} is not available in the data. Please adjust your selection."
         )
+    elif not end_exists:
+        st.error(
+            f"Error: The end date {end_year}-{end_quarter} is not available in the data. Please adjust your selection."
+        )
+    elif ((start_year > end_year) | (start_year >= end_year & int(start_quarter.replace("Q", "")) >= int(end_quarter.replace("Q", "")))):
+        st.error("the start date cannot be greater than end date. Please adjust your selection.")
+    else:
+        mask = ((temp_df["Year"] >= start_year) & (temp_df["Q"] >= start_quarter)) & (
+            ((temp_df["Year"] <= end_year) & (temp_df["Q"] <= end_quarter))
+        )
+        temp_df["Qn"] = temp_df["Q"].str.extract(r"Q([1-4])").astype(int)
+        temp_df["quarter_start"] = pd.PeriodIndex(
+            year=temp_df["Year"], quarter=temp_df["Qn"], freq="Q"
+        ).start_time
 
-mask = (
-    (df["Year"] > start_year)
-    | ((df["Year"] == start_year) & (df["Q"] >= start_quarter))
-) & ((df["Year"] < end_year) | ((df["Year"] == end_year) & (df["Q"] <= end_quarter)))
-temp_df = df.copy()
-temp_df["Qn"] = temp_df["Q"].str.extract(r"Q([1-4])").astype(int)
-temp_df["quarter_start"] = pd.PeriodIndex(
-    year=temp_df["Year"], quarter=temp_df["Qn"], freq="Q"
-).start_time
+        population_tab, compare_tab = st.tabs(["Population over time", "Compare regions"])
+        with population_tab:
+            pop_change_col1, pop_change_col2 = st.columns(2)
+            with pop_change_col1:
+                start_pop = temp_df.loc[mask, region].iloc[0]
+                end_pop = temp_df.loc[mask, region].iloc[-1]
+                abs_change = end_pop - start_pop
+                perc_change = (end_pop - start_pop) / start_pop * 100
+                st.metric(
+                    label=f"Population of {region} in {start_quarter} {start_year}",
+                    value=f"{start_pop:,}",
+                )
+                st.metric(
+                    label=f"Absolute change in population of {region} in {end_quarter} {end_year}",
+                    value=f"{abs_change:,}",
+                    delta=f"{perc_change:.2f}%",
+                )
 
-population_tab, compare_tab = st.tabs(["Population over time", "Compare regions"])
-with population_tab:
-    if submitted:
-        pop_change_col1, pop_change_col2 = st.columns(2)
-        with pop_change_col1:
-            start_pop = temp_df.loc[mask, region].iloc[0]
-            end_pop = temp_df.loc[mask, region].iloc[-1]
-            abs_change = end_pop - start_pop
-            perc_change = (end_pop - start_pop) / start_pop * 100
-            st.metric(
-                label=f"Population of {region} in {start_quarter} {start_year}",
-                value=f"{start_pop:,}",
+            with pop_change_col2:
+                filtered = temp_df.loc[
+                    mask, ["quarter_start", "Quarter", region]
+                ].sort_values("quarter_start")
+                st.line_chart(filtered.set_index("quarter_start")[region])
+        with compare_tab:
+            st.write("Compare population of all regions")
+            regions = st.multiselect(
+                "Select regions to compare",
+                options=df.columns[1:-2].tolist(),
+                default=df.columns[1],
             )
-            st.metric(
-                label=f"Absolute change in population of {region} in {end_quarter} {end_year}",
-                value=f"{abs_change:,}",
-                delta=f"{perc_change:.2f}%",
-            )
-
-        with pop_change_col2:
-            filtered = temp_df.loc[mask, ["quarter_start", "Quarter", region]].sort_values(
+            filtered_data = temp_df.loc[mask, ["quarter_start"] + regions].sort_values(
                 "quarter_start"
             )
-            st.line_chart(filtered.set_index("quarter_start")[region])
-    else:
-        st.info("Please select the start and end date, then click on Analyze")
-with compare_tab:
-    st.write("Compare population of all regions")
-    if submitted:
-        regions = df.columns[1:-2].tolist()
-        filtered_data = temp_df.loc[mask, ["quarter_start"] + regions].sort_values("quarter_start")
-        st.line_chart(filtered_data.set_index("quarter_start"))
-    else:
-        st.info("Please select the start and end date, then click on Analyze")
+            st.line_chart(filtered_data.set_index("quarter_start"))
+else:
+    st.info("Please select the start and end date, then click on Analyze")
