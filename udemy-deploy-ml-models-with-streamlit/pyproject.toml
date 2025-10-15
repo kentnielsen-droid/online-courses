@@ -13,4 +13,5 @@ dependencies = [
     "scikit-learn>=1.7.2",
     "streamlit_authenticator",
     "PyYAML",
+    "supabase>=2.22.0",
 ]
