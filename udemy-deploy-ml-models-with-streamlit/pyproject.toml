@@ -14,4 +14,5 @@ dependencies = [
     "streamlit_authenticator",
     "PyYAML",
     "supabase>=2.22.0",
+    "statsforecast>=2.0.1",
 ]
