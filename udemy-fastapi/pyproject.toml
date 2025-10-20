@@ -10,4 +10,9 @@ dependencies = [
     "python-dotenv>=1.1.1",
     "sqlalchemy>=2.0.44",
     "uvicorn",
+    "pydantic[email]",
+    "python-jose[cryptography]",
+    "passlib[bcrypt]",
+    "passlib[argon2]",
+    "python-multipart"
 ]
