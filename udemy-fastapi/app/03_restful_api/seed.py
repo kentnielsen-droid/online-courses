@@ -1,15 +1,17 @@
 from sqlalchemy.orm import Session
-from .db import SessionLocal, engine, Base
+from fastapi import Depends
+from typing import Annotated
+from .db import SessionLocal, engine, Base, get_db
 from .models import Todo, User
 from .security import get_password_hash
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import random
 
-def check_if_seeded(db: Session) -> bool:
+def check_if_seeded(db: Annotated[Session, Depends(get_db)]) -> bool:
     """Check if database already has data."""
     return db.query(User).count() > 0
 
-def seed_users(db: Session):
+def seed_users(db: Annotated[Session, Depends(get_db)]):
     """Seed users."""
     users_data = [
         {
@@ -45,7 +47,7 @@ def seed_users(db: Session):
     print(f"✅ Successfully seeded {len(users)} users!")
     return users
 
-def seed_todos(db: Session, users):
+def seed_todos(db: Annotated[Session, Depends(get_db)], users):
     """Seed todos for users."""
     todos_templates = [
         ("Complete FastAPI tutorial", "Go through the official FastAPI documentation", True),
@@ -72,7 +74,7 @@ def seed_todos(db: Session, users):
                 description=description,
                 completed=completed,
                 owner_id=user.id,
-                created_at=datetime.utcnow() - timedelta(days=random.randint(0, 30))
+                created_at=datetime.now(timezone.utc) - timedelta(days=random.randint(0, 30))
             )
             db.add(todo)
             todos.append(todo)

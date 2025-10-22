@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
+from typing import Annotated
 
 from .db import get_db
 from . import schemas
@@ -21,7 +22,7 @@ router = APIRouter(
 @router.post("/register", response_model=schemas.UserResponse, status_code=status.HTTP_201_CREATED)
 def register(
     user: schemas.UserCreate,
-    db: Session = Depends(get_db)
+    db: Annotated[Session, Depends(get_db)]
 ):
     """Register a new user."""
     # Check if email already exists
@@ -44,8 +45,8 @@ def register(
 
 @router.post("/login", response_model=schemas.Token)
 def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db)
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    db: Annotated[Session, Depends(get_db)]
 ):
     """Login and get access token."""
     user = authenticate_user(db, form_data.username, form_data.password)
@@ -73,7 +74,7 @@ def login(
 @router.post("/login/json", response_model=schemas.Token)
 def login_json(
     credentials: schemas.LoginRequest,
-    db: Session = Depends(get_db)
+    db: Annotated[Session, Depends(get_db)]
 ):
     """Login with JSON body (alternative to form data)."""
     user = authenticate_user(db, credentials.username, credentials.password)
@@ -100,15 +101,15 @@ def login_json(
 
 @router.get("/me", response_model=schemas.UserResponse)
 def get_current_user_info(
-    current_user: schemas.UserResponse = Depends(get_current_active_user)
+    current_user: Annotated[schemas.UserResponse, Depends(get_current_active_user)]
 ):
     """Get current user information."""
     return current_user
 
 @router.get("/me/todos", response_model=schemas.UserWithTodos)
 def get_current_user_with_todos(
-    current_user = Depends(get_current_active_user),
-    db: Session = Depends(get_db)
+    db: Annotated[Session, Depends(get_db)],
+    current_user = Depends(get_current_active_user)
 ):
     """Get current user with their todos."""
     return current_user
