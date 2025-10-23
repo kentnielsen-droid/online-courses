@@ -16,7 +16,7 @@ router = APIRouter(
 def create_todo(
     db: Annotated[Session, Depends(get_db)],
     todo: schemas.TodoCreate,
-    current_user = Depends(get_current_active_user)
+    current_user = Annotated[dict, Depends(get_current_active_user)]
 ):
     """Create a new todo for the current user."""
     return todo_crud.create(db, todo, owner_id=current_user.id)
@@ -27,7 +27,7 @@ def get_todos(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=100),
     completed: Optional[bool] = None,
-    current_user = Depends(get_current_active_user)
+    current_user = Annotated[dict, Depends(get_current_active_user)]
 ):
     """Get all todos for the current user."""
     return todo_crud.get_all_for_user(
@@ -42,7 +42,7 @@ def get_todos(
 def get_todo(
     db: Annotated[Session, Depends(get_db)],
     todo_id: int,
-    current_user = Depends(get_current_active_user)
+    current_user = Annotated[dict, Depends(get_current_active_user)]
 ):
     """Get a specific todo by ID."""
     db_todo = todo_crud.get_by_id(db, todo_id, owner_id=current_user.id)
@@ -58,7 +58,7 @@ def update_todo(
     db: Annotated[Session, Depends(get_db)],
     todo_id: int,
     todo: schemas.TodoUpdate,
-    current_user = Depends(get_current_active_user)
+    current_user = Annotated[dict, Depends(get_current_active_user)]
 ):
     """Update a todo."""
     db_todo = todo_crud.update(db, todo_id, current_user.id, todo)
@@ -73,7 +73,7 @@ def update_todo(
 def delete_todo(
     db: Annotated[Session, Depends(get_db)],
     todo_id: int,
-    current_user = Depends(get_current_active_user)
+    current_user = Annotated[dict, Depends(get_current_active_user)]
 ):
     """Delete a todo."""
     if not todo_crud.delete(db, todo_id, current_user.id):
@@ -86,7 +86,7 @@ def delete_todo(
 def search_todos(
     db: Annotated[Session, Depends(get_db)],
     q: str = Query(..., min_length=1),
-    current_user = Depends(get_current_active_user)
+    current_user = Annotated[dict, Depends(get_current_active_user)]
 ):
     """Search todos by title or description."""
     return todo_crud.search_for_user(db, current_user.id, q)

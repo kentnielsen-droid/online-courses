@@ -71,34 +71,6 @@ def login(
     
     return {"access_token": access_token, "token_type": "bearer"}
 
-@router.post("/login/json", response_model=schemas.Token)
-def login_json(
-    credentials: schemas.LoginRequest,
-    db: Annotated[Session, Depends(get_db)]
-):
-    """Login with JSON body (alternative to form data)."""
-    user = authenticate_user(db, credentials.username, credentials.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    if not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Inactive user"
-        )
-    
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user.username},
-        expires_delta=access_token_expires
-    )
-    
-    return {"access_token": access_token, "token_type": "bearer"}
-
 @router.get("/me", response_model=schemas.UserResponse)
 def get_current_user_info(
     current_user: Annotated[schemas.UserResponse, Depends(get_current_active_user)]

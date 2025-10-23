@@ -25,7 +25,7 @@ def get_users(
 def get_user(
     db: Annotated[Session, Depends(get_db)],
     user_id: int,
-    current_user = Depends(get_current_active_user)
+    current_user = Annotated[dict, Depends(get_current_active_user)]
 ):
     """Get a specific user by ID."""
     # Users can only view their own profile unless they're superuser
@@ -48,7 +48,7 @@ def update_user(
     db: Annotated[Session, Depends(get_db)],
     user_id: int,
     user_update: schemas.UserUpdate,
-    current_user = Depends(get_current_active_user)
+    current_user = Annotated[dict, Depends(get_current_active_user)]
 ):
     """Update a user."""
     # Users can only update their own profile unless they're superuser
