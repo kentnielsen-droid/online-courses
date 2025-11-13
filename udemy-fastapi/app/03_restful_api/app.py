@@ -39,6 +39,10 @@ def root():
         "version": "2.0.0"
     }
 
+@app.get("/healthy")
+def health_check():
+    return {'status': 'Healthy'}
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
