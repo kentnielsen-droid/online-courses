@@ -16,5 +16,7 @@ dependencies = [
     "passlib[argon2]",
     "python-multipart",
     "pytest",
-    "httpx"
+    "httpx",
+    "aiofiles",
+    "jinja2"
 ]

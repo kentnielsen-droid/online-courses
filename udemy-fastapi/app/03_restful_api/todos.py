@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Request
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from typing import List, Optional, Annotated
-
+from starlette.responses import RedirectResponse
 from .db import get_db
 from . import schemas
 from .crud import todo_crud
@@ -11,6 +12,27 @@ router = APIRouter(
     prefix="/todos",
     tags=["todos"]
 )
+
+templates = Jinja2Templates(directory="app/03_restful_api/templates")
+
+def redirect_to_login():
+    redirect_response = RedirectResponse(url="/auth/login-page", status_code=status.HTTP_302_FOUND)
+    redirect_response.delete_cookie(key="access_token")
+    return redirect_response
+
+@router.get("/todo-page")
+async def render_todo_page(request: Request):
+    try:
+        user = await get_current_active_user(request.cookies.get('access_token'))
+
+        if user is None:
+            return redirect_to_login()
+        
+        todos = get_todos()
+        return templates.TemplateResponse("todo.html", {"request": request, "todos": todos, "user": user})
+    except:
+        return redirect_to_login()
+
 
 @router.post("/", response_model=schemas.TodoResponse, status_code=status.HTTP_201_CREATED)
 def create_todo(

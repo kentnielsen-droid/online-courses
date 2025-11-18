@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from datetime import timedelta
 from typing import Annotated
@@ -18,6 +19,16 @@ router = APIRouter(
     prefix="/auth",
     tags=["authentication"]
 )
+
+templates = Jinja2Templates(directory="app/03_restful_api/templates")
+
+@router.get("/login-page")
+def render_login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+@router.get("/register-page")
+def render_login_page(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
 
 @router.post("/register", response_model=schemas.UserResponse, status_code=status.HTTP_201_CREATED)
 def register(
