@@ -30,6 +30,44 @@ def skills_widget():
                         for item in items:
                             ui.label(item).classes('text-sm px-3 py-1 rounded-md bg-slate-800/50 text-slate-300 border border-slate-700/50 hover:border-sky-500/50 hover:text-sky-300 transition-colors cursor-default')
 
+def timeline_widget():
+    experience = [
+        {"role": "Senior Data Scientist", "company": "TechCorp AI", "date": "2022 - Present", "desc": "Leading a team of 5 ML engineers building LLM-based customer support agents."},
+        {"role": "Machine Learning Engineer", "company": "DataFlow Systems", "date": "2020 - 2022", "desc": "Deployed computer vision models for manufacturing defect detection. Optimized inference time by 40%."},
+        {"role": "Data Analyst", "company": "FinTech Solutions", "date": "2018 - 2020", "desc": "Built automated reporting dashboards and predictive models for credit risk assessment."}
+    ]
+    
+    with ui.column().classes('w-full gap-8 border-l-2 border-slate-700 ml-4 pl-8 relative'):
+        for job in experience:
+            with ui.column().classes('relative'):
+                # Dot on the timeline
+                ui.element('div').classes('absolute -left-[41px] top-1 w-5 h-5 rounded-full bg-sky-500 border-4 border-slate-900')
+                
+                ui.label(job['date']).classes('text-sm text-sky-400 font-mono mb-1')
+                ui.label(job['role']).classes('text-xl font-bold text-slate-100')
+                ui.label(job['company']).classes('text-md text-slate-400 mb-2')
+                ui.label(job['desc']).classes('text-slate-300 leading-relaxed')
+
+def article_card(title, summary, date, link):
+    with ui.card().classes('glass-card w-full p-6 hover:border-sky-500/50 cursor-pointer group') as card:
+        card.on('click', lambda: ui.open(link, new_tab=True))
+        with ui.row().classes('justify-between items-start w-full mb-4'):
+            ui.icon('article', size='sm', color='sky-400').classes('opacity-80')
+            ui.label(date).classes('text-xs text-slate-500 font-mono')
+        
+        ui.label(title).classes('text-lg font-bold text-slate-100 mb-2 group-hover:text-sky-400 transition-colors')
+        ui.label(summary).classes('text-sm text-slate-400 line-clamp-2')
+
+def testimonial_card(quote, author, role):
+    with ui.card().classes('glass p-8 relative'):
+        ui.icon('format_quote', size='lg', color='slate-700').classes('absolute top-4 right-4 opacity-50')
+        ui.label(quote).classes('text-lg text-slate-300 italic mb-6 leading-relaxed')
+        with ui.row().classes('items-center gap-3'):
+            ui.avatar(icon='person', color='slate-800', text_color='slate-400')
+            with ui.column().classes('gap-0'):
+                ui.label(author).classes('font-bold text-slate-200')
+                ui.label(role).classes('text-xs text-sky-500')
+
 def project_detail_dialog(project: Project):
     with ui.dialog() as dialog, ui.card().classes('w-full max-w-2xl bg-slate-900 border border-slate-700'):
         with ui.row().classes('w-full justify-between items-start'):

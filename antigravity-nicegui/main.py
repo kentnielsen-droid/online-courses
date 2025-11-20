@@ -2,7 +2,11 @@ from nicegui import ui
 import theme
 import asyncio
 from projects import get_projects
-from components import project_card, project_detail_dialog, skills_widget
+from nicegui import ui
+import theme
+import asyncio
+from projects import get_projects
+from components import project_card, project_detail_dialog, skills_widget, timeline_widget, article_card, testimonial_card
 
 # Page Layout
 @ui.page('/')
@@ -49,12 +53,18 @@ async def index():
             ui.label('I build intelligent systems and scalable AI solutions.').classes('text-xl text-slate-300 max-w-2xl leading-relaxed mb-10')
             with ui.row().classes('gap-6'):
                 ui.button('View Projects', on_click=lambda: ui.run_javascript('document.getElementById("projects").scrollIntoView({behavior: "smooth"})')).props('unelevated color=sky text-color=slate-900 size=lg').classes('px-8 py-2 font-bold rounded-full shadow-[0_0_20px_rgba(56,189,248,0.3)] hover:shadow-[0_0_30px_rgba(56,189,248,0.5)] transition-shadow')
-                ui.button('Contact Me', on_click=lambda: ui.run_javascript('document.getElementById("contact").scrollIntoView({behavior: "smooth"})')).props('outline color=sky size=lg').classes('px-8 py-2 font-bold rounded-full border-2 hover:bg-sky-400/10')
+                ui.button('Download Resume', icon='download', on_click=lambda: ui.notify('Resume download started (mock)')).props('outline color=sky size=lg').classes('px-8 py-2 font-bold rounded-full border-2 hover:bg-sky-400/10')
 
         # Skills Section
         with ui.column().classes('w-full max-w-6xl py-20 px-6 reveal') as skills_section:
             skills_section.props('id=skills')
             skills_widget()
+
+        # Experience Section
+        with ui.column().classes('w-full max-w-4xl py-20 px-6 reveal') as experience_section:
+            experience_section.props('id=experience')
+            ui.label('Professional Journey').classes('text-4xl font-bold text-slate-100 mb-12 text-center w-full')
+            timeline_widget()
 
         # Projects Section
         with ui.column().classes('w-full max-w-6xl py-20 px-6 reveal') as projects_section:
@@ -65,6 +75,22 @@ async def index():
             with ui.grid(columns=3).classes('w-full gap-8'):
                 for project in projects:
                     project_card(project, on_click=project_detail_dialog)
+
+        # Articles Section
+        with ui.column().classes('w-full max-w-6xl py-20 px-6 reveal') as articles_section:
+            articles_section.props('id=articles')
+            ui.label('Latest Thoughts').classes('text-4xl font-bold text-slate-100 mb-12 text-center w-full')
+            with ui.grid(columns=2).classes('w-full gap-8'):
+                article_card("The Future of LLMs in Production", "Exploring the challenges and opportunities of deploying Large Language Models in enterprise environments.", "Oct 24, 2024", "https://medium.com")
+                article_card("Understanding Attention Mechanisms", "A deep dive into the mathematics behind the Transformer architecture.", "Sep 15, 2024", "https://medium.com")
+
+        # Testimonials Section
+        with ui.column().classes('w-full max-w-6xl py-20 px-6 reveal') as testimonials_section:
+            testimonials_section.props('id=testimonials')
+            ui.label('What People Say').classes('text-4xl font-bold text-slate-100 mb-12 text-center w-full')
+            with ui.grid(columns=2).classes('w-full gap-8'):
+                testimonial_card("One of the most talented data scientists I've worked with. Delivered exceptional results on our churn prediction model.", "Sarah Chen", "CTO at TechCorp")
+                testimonial_card("Great communicator and technically brilliant. Transformed our data infrastructure.", "Michael Ross", "Product Manager")
 
         # About Section
         with ui.column().classes('w-full max-w-4xl py-32 px-6 items-center text-center reveal') as about_section:
