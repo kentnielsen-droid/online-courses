@@ -1,5 +1,6 @@
 from nicegui import ui
 from projects import Project
+from demos import sentiment_demo, churn_demo
 
 def project_card(project: Project, on_click):
     with ui.card().classes('glass-card w-full max-w-sm cursor-pointer no-shadow') as card:
@@ -8,7 +9,7 @@ def project_card(project: Project, on_click):
         with ui.card_section():
             ui.label(project.title).classes('text-xl font-bold text-slate-100 mb-2')
             ui.label(project.description).classes('text-sm text-slate-300 mb-4 line-clamp-3')
-            with ui.row().classes('gap-2 flex-wrap'):
+            with ui.row().classes('gap-2 flex-wrap mb-4'):
                 for tag in project.tags:
                     ui.label(tag).classes('text-xs px-2 py-1 rounded-full bg-slate-700/80 text-sky-300 border border-slate-600')
 
@@ -82,10 +83,14 @@ def project_detail_dialog(project: Project):
 
         ui.markdown(project.long_description).classes('text-slate-300 text-base leading-relaxed mb-6')
         
-        with ui.row().classes('w-full justify-end gap-4'):
+        with ui.row().classes('w-full justify-end gap-4 mt-6'):
             if project.github_url:
                 ui.button('View Code', icon='code', on_click=lambda: ui.open(project.github_url, new_tab=True)).props('outline color=sky')
             if project.demo_url:
-                ui.button('Live Demo', icon='launch', on_click=lambda: ui.open(project.demo_url, new_tab=True)).props('unelevated color=sky text-color=slate-900')
+                # Check if it's an internal demo
+                if project.id in ['sentiment-analysis', 'customer-churn']:
+                    ui.button('Live Demo', icon='launch', on_click=lambda: ui.navigate.to(f'/demo/{project.id}')).props('unelevated color=cyan-6 text-color=slate-900 font-bold')
+                else:
+                    ui.button('Live Demo', icon='launch', on_click=lambda: ui.open(project.demo_url, new_tab=True)).props('unelevated color=cyan-6 text-color=slate-900 font-bold')
     
     dialog.open()

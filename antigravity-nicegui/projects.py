@@ -29,7 +29,8 @@ def get_projects() -> List[Project]:
                 - Transformer-based classification
                 - Interactive visualization with Plotly
             """,
-            github_url="https://github.com/example/sentiment"
+            github_url="https://github.com/example/sentiment",
+            demo_url="/demo/sentiment-analysis"
         ),
         Project(
             id="customer-churn",
@@ -46,7 +47,8 @@ def get_projects() -> List[Project]:
                 - Model training and hyperparameter tuning
                 - Explainability with SHAP values
             """,
-            github_url="https://github.com/example/churn"
+            github_url="https://github.com/example/churn",
+            demo_url="/demo/customer-churn"
         ),
         Project(
             id="image-segmentation",

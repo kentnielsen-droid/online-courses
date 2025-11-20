@@ -7,6 +7,7 @@ import theme
 import asyncio
 from projects import get_projects
 from components import project_card, project_detail_dialog, skills_widget, timeline_widget, article_card, testimonial_card
+from demos import sentiment_demo, churn_demo
 
 # Page Layout
 @ui.page('/')
@@ -104,5 +105,22 @@ async def index():
                 ui.label('Get In Touch').classes('text-4xl font-bold text-slate-100 mb-6')
                 ui.label('Open for collaborations and new opportunities.').classes('text-lg text-slate-200 mb-10')
                 ui.button('Email Me', icon='mail', on_click=lambda: ui.open('mailto:hello@example.com')).props('unelevated color=green-8 text-color=white size=xl').classes('px-10 py-3 rounded-full font-bold shadow-lg hover:scale-105 transition-transform')
+
+@ui.page('/demo/{project_id}')
+def project_demo(project_id: str):
+    with theme.frame('Project Demo'):
+        with ui.column().classes('w-full max-w-4xl mx-auto py-20 px-6'):
+            if project_id == 'sentiment-analysis':
+                ui.label('Sentiment Analysis Demo').classes('text-4xl font-bold text-slate-100 mb-4')
+                ui.label('Enter text below to analyze its sentiment using our mock AI model.').classes('text-lg text-slate-300 mb-8')
+                sentiment_demo()
+            elif project_id == 'customer-churn':
+                ui.label('Customer Churn Prediction').classes('text-4xl font-bold text-slate-100 mb-4')
+                ui.label('Adjust the customer parameters to predict the likelihood of churn.').classes('text-lg text-slate-300 mb-8')
+                churn_demo()
+            else:
+                ui.label('Demo not found').classes('text-2xl text-red-400')
+            
+            ui.button('Back to Portfolio', icon='arrow_back', on_click=lambda: ui.navigate.to('/')).props('outline color=slate-400').classes('mt-12 hover:bg-slate-800')
 
 ui.run(title='My AI Portfolio')
