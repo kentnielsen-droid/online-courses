@@ -41,26 +41,26 @@ def frame(nav_title: str):
 
             /* Glassmorphism Utilities */
             .glass {
-                background: rgba(30, 41, 59, 0.4);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
-                border: 1px solid rgba(255, 255, 255, 0.05);
+                background: rgba(15, 23, 42, 0.7); /* Darker base for better text contrast */
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border: 1px solid rgba(255, 255, 255, 0.08);
             }
             
             .glass-card {
-                background: rgba(30, 41, 59, 0.6);
-                backdrop-filter: blur(16px);
-                -webkit-backdrop-filter: blur(16px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+                background: rgba(30, 41, 59, 0.7); /* Increased opacity */
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.12); /* More visible border */
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
             
             .glass-card:hover {
-                transform: translateY(-5px) scale(1.02);
-                background: rgba(30, 41, 59, 0.8);
-                border-color: rgba(56, 189, 248, 0.3);
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+                transform: translateY(-5px) scale(1.01);
+                background: rgba(30, 41, 59, 0.9);
+                border-color: rgba(56, 189, 248, 0.5); /* Brighter border on hover */
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
             }
 
             /* Typography & Links */
@@ -72,10 +72,12 @@ def frame(nav_title: str):
             a {
                 color: #38bdf8;
                 text-decoration: none;
-                transition: color 0.2s;
+                transition: all 0.2s;
+                font-weight: 600; /* Bolder links */
             }
             a:hover {
                 color: #7dd3fc;
+                text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
             }
             
             /* Scroll Reveal Animation Class */

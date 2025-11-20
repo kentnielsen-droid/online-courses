@@ -50,10 +50,9 @@ async def index():
             
             ui.timer(0.1, type_effect, once=True)
 
-            ui.label('I build intelligent systems and scalable AI solutions.').classes('text-xl text-slate-300 max-w-2xl leading-relaxed mb-10')
             with ui.row().classes('gap-6'):
-                ui.button('View Projects', on_click=lambda: ui.run_javascript('document.getElementById("projects").scrollIntoView({behavior: "smooth"})')).props('unelevated color=sky text-color=slate-900 size=lg').classes('px-8 py-2 font-bold rounded-full shadow-[0_0_20px_rgba(56,189,248,0.3)] hover:shadow-[0_0_30px_rgba(56,189,248,0.5)] transition-shadow')
-                ui.button('Download Resume', icon='download', on_click=lambda: ui.notify('Resume download started (mock)')).props('outline color=sky size=lg').classes('px-8 py-2 font-bold rounded-full border-2 hover:bg-sky-400/10')
+                ui.button('View Projects', on_click=lambda: ui.run_javascript('document.getElementById("projects").scrollIntoView({behavior: "smooth"})')).props('unelevated color=blue-9 text-color=white size=lg').classes('px-8 py-2 font-bold rounded-full shadow-[0_0_20px_rgba(56,189,248,0.3)] hover:shadow-[0_0_30px_rgba(56,189,248,0.5)] transition-shadow')
+                ui.button('Download Resume', icon='download', on_click=lambda: ui.notify('Resume download started (mock)')).props('outline color=cyan-7 text-color=cyan-4 size=lg').classes('px-8 py-2 font-bold rounded-full border-2 hover:bg-cyan-900/20')
 
         # Skills Section
         with ui.column().classes('w-full max-w-6xl py-20 px-6 reveal') as skills_section:
@@ -96,14 +95,14 @@ async def index():
         with ui.column().classes('w-full max-w-4xl py-32 px-6 items-center text-center reveal') as about_section:
             about_section.props('id=about')
             ui.label('About Me').classes('text-4xl font-bold text-slate-100 mb-8')
-            ui.label('I am passionate about turning data into actionable insights. With a background in Computer Science and Statistics, I specialize in Machine Learning, NLP, and Computer Vision.').classes('text-xl text-slate-300 leading-relaxed')
+            ui.label('I am passionate about turning data into actionable insights. With a background in Computer Science and Statistics, I specialize in Machine Learning, NLP, and Computer Vision.').classes('text-xl text-slate-200 leading-relaxed')
 
         # Contact Section
         with ui.column().classes('w-full py-32 items-center reveal') as contact_section:
             contact_section.props('id=contact')
-            with ui.card().classes('glass p-12 items-center text-center max-w-3xl w-full mx-6'):
+            with ui.card().classes('glass p-12 items-center text-center max-w-3xl w-full mx-6 border border-slate-700'):
                 ui.label('Get In Touch').classes('text-4xl font-bold text-slate-100 mb-6')
-                ui.label('Open for collaborations and new opportunities.').classes('text-lg text-slate-300 mb-10')
-                ui.button('Email Me', icon='mail', on_click=lambda: ui.open('mailto:hello@example.com')).props('unelevated color=emerald text-color=slate-900 size=xl').classes('px-10 py-3 rounded-full font-bold shadow-lg hover:scale-105 transition-transform')
+                ui.label('Open for collaborations and new opportunities.').classes('text-lg text-slate-200 mb-10')
+                ui.button('Email Me', icon='mail', on_click=lambda: ui.open('mailto:hello@example.com')).props('unelevated color=green-8 text-color=white size=xl').classes('px-10 py-3 rounded-full font-bold shadow-lg hover:scale-105 transition-transform')
 
 ui.run(title='My AI Portfolio')
