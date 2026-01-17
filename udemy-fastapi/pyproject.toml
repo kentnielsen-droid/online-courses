@@ -1,0 +1,22 @@
+[project]
+name = "udemy-fastapi"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "alembic>=1.17.0",
+    "fastapi",
+    "python-dotenv>=1.1.1",
+    "sqlalchemy>=2.0.44",
+    "uvicorn",
+    "pydantic[email]",
+    "python-jose[cryptography]",
+    "passlib[bcrypt]",
+    "passlib[argon2]",
+    "python-multipart",
+    "pytest",
+    "httpx",
+    "aiofiles",
+    "jinja2"
+]
