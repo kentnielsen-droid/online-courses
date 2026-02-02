@@ -13,23 +13,55 @@ def project_card(project: Project, on_click):
                 for tag in project.tags:
                     ui.label(tag).classes('text-xs px-2 py-1 rounded-full bg-slate-700/80 text-sky-300 border border-slate-600')
 
+def _pill_html(label: str) -> str:
+    return f'<span class="pill"><span class="pill-dot"></span>{label}</span>'
+
+
 def skills_widget():
-    skills = {
-        "Languages": ["Python", "SQL", "R", "C++"],
-        "Machine Learning": ["PyTorch", "TensorFlow", "Scikit-learn", "XGBoost"],
-        "Data Engineering": ["Spark", "Kafka", "Airflow", "Docker"],
-        "Tools": ["Git", "AWS", "FastAPI", "NiceGUI"]
-    }
-    
-    with ui.card().classes('glass w-full p-6'):
-        ui.label('Technical Arsenal').classes('text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-6')
-        with ui.grid(columns=2).classes('w-full gap-8'):
-            for category, items in skills.items():
-                with ui.column().classes('gap-2'):
-                    ui.label(category).classes('text-lg font-semibold text-slate-200')
-                    with ui.row().classes('gap-2 flex-wrap'):
-                        for item in items:
-                            ui.label(item).classes('text-sm px-3 py-1 rounded-md bg-slate-800/80 text-slate-200 border border-slate-700 hover:border-sky-500 hover:text-sky-300 transition-colors cursor-default')
+    """Framer-style sliding 'Technical Arsenal' marquee."""
+    skills_row_1 = [
+        # Data + APIs
+        "Python", "SQL", "Pandas", "Polars", "PyArrow", "Requests", "HTTPX", "BeautifulSoup",
+        "FastAPI", "Pydantic", "OpenAPI", "gRPC",
+        # ML / DL
+        "NumPy", "Scikit-learn", "PyTorch", "TorchVision", "XGBoost", "LightGBM",
+        "Transformers", "LangChain", "Sentence Transformers",
+    ]
+    skills_row_2 = [
+        # Data eng + orchestration
+        "Postgres", "SQLite", "Redis", "Kafka", "Spark", "Airflow", "dbt",
+        # MLOps / deployment
+        "Docker", "Kubernetes", "CI/CD", "GitHub Actions", "MLflow", "ONNX", "BentoML",
+        # Serving / monitoring
+        "Model Serving", "A/B Testing", "Prometheus", "Grafana", "Evidently", "Data Drift", "Feature Store",
+        # Cloud
+        "AWS", "S3", "Lambda", "CloudWatch",
+    ]
+
+    def row_markup(items: list[str]) -> str:
+        # Duplicate content so CSS can scroll -50% for seamless loop.
+        base = ''.join(_pill_html(x) for x in items)
+        return base + base
+
+    with ui.element('div').classes('skills-card'):
+        ui.html('<div class="skills-title">Technical Arsenal</div>', sanitize=False)
+        ui.html('<div class="skills-subtitle">Full-stack AI/ML engineering: data → models → deployment → monitoring.</div>', sanitize=False)
+
+        ui.html(f'''
+            <div class="marquee">
+              <div class="marquee-track">
+                {row_markup(skills_row_1)}
+              </div>
+            </div>
+        ''', sanitize=False)
+        ui.html('<div style="height:10px"></div>', sanitize=False)
+        ui.html(f'''
+            <div class="marquee marquee-slow">
+              <div class="marquee-track">
+                {row_markup(skills_row_2)}
+              </div>
+            </div>
+        ''', sanitize=False)
 
 def timeline_widget():
     experience = [
