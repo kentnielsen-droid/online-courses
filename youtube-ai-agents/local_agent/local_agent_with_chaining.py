@@ -9,10 +9,19 @@ from langchain_community.tools import (
     DuckDuckGoSearchRun,
     OpenWeatherMapQueryRun,
 )
-from langchain_community.utilities import WikipediaAPIWrapper
+from langchain_community.utilities import WikipediaAPIWrapper, OpenWeatherMapAPIWrapper
 from langchain.tools import tool
 from datetime import datetime
-from typing import Union
+from typing import Union, Optional
+import logging
+
+# Set up logging configuration
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -20,12 +29,27 @@ LOCAL_CHAT_MODEL: str = "qwen3"
 CLOUD_CHAT_MODEL: str = "gemini-3-flash-preview"
 
 
-class WeatherResponse(BaseModel):
-    temperature: float = Field(
-        description="The current temperature in celsius for the given location."
+class WeatherRequest(BaseModel):
+    description: str = Field(description="A raw description of the weather request")
+    is_weather_request: bool = Field(
+        description="A boolean describing if the request in about the weather or not"
     )
+    confidence_score: float = Field(description="Confidence score between 0 and 1")
+
+
+class WeatherDetails(BaseModel):
+    temperature: float = Field(
+        description="The current temperature for the specified location"
+    )
+    wind_speed: float = Field(
+        description="The current wind speed for the specified location"
+    )
+    humidity: float = Field(description="The current humidity for a specified location")
+
+
+class WeatherResponse(BaseModel):
     response: str = Field(
-        description="A natural language response to the user's question."
+        description="A natural language response to the user's question"
     )
 
 
@@ -83,33 +107,142 @@ def wiki_search(query: str):
 
 
 @tool
-def get_weather(query: str):
+def get_weather(query: str) -> Optional[WeatherResponse]:
     """
-    This is a publically available API that returns the weather data for a given latitude and longitude coordinates
+    Confirms the data request is about the weather and gets the weather data for a specified location.
     Args:
-        query: Location of where to get the weather information from.
+        query: The users question regarding the weather
     """
-    weather = OpenWeatherMapQueryRun()
-    return str(weather.invoke(query))
+
+    def is_weather_request(query: str) -> WeatherRequest:
+        logger.info("Starting weather extraction analysis")
+        logger.debug(f"Input text: {query}")
+
+        today = datetime.now()
+        date_context = f"Today is {today.strftime('%A, %B %d, %Y')}."
+
+        agent = create_agent(
+            model=local_llm,
+            system_prompt=f"{date_context}, Analyze if the text describes a weather request.",
+            response_format=WeatherRequest,
+        )
+        result = agent.invoke(
+            {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": query,
+                    }
+                ]
+            }
+        )
+        structued_result: WeatherRequest = result.get("structured_response")
+        logger.info(
+            f"Extraction complete - Is weather request: {structued_result.is_weather_request}, Confidence: {structued_result.confidence_score:.2f}"
+        )
+        return structued_result
+
+    def weather_details(description: str) -> WeatherDetails:
+        @tool
+        def _get_weather(query: str):
+            """
+            Gets the weather data for a specified location.
+            Args:
+                query: Location of where to get the weather information from.
+            """
+            weather_wrapper = OpenWeatherMapAPIWrapper()
+            weather = OpenWeatherMapQueryRun(api_wrapper=weather_wrapper)
+            location_weather = weather.invoke(query)
+            print("\n\n")
+            print(location_weather)
+            print("\n\n")
+            return location_weather
+
+        logger.info("Starting weather details extraction")
+
+        today = datetime.now()
+        date_context = f"Today is {today.strftime('%A, %B %d, %Y')}."
+
+        agent = create_agent(
+            model=cloud_llm,
+            system_prompt=f"{date_context}, Extract detailed weather infotmation. When dates reference 'next Tuesday' or similar relative dates, use this current date as reference.",
+            response_format=WeatherDetails,
+            tools=[_get_weather],
+        )
+        result = agent.invoke(
+            {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": description,
+                    }
+                ]
+            }
+        )
+        structued_result: WeatherDetails = result.get("structured_response")
+        logger.info(
+            f"Extracted weather details - Temperature: {structued_result.temperature}, Wind Speed: {structued_result.wind_speed}, Humidity: {structued_result.humidity}"
+        )
+        return structued_result
+
+    def weather_response(weather: WeatherDetails) -> WeatherResponse:
+        logger.info("Weather reply message")
+
+        agent = create_agent(
+            model=local_llm,
+            system_prompt="Respond with a natural reply to the information specified.",
+            response_format=WeatherResponse,
+        )
+        result = agent.invoke(
+            {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": f"{str(weather)}",
+                    }
+                ]
+            }
+        )
+        structued_result: WeatherDetails = result.get("structured_response")
+        logger.info("Weather reply message successfully sent")
+        return structued_result
+
+    logger.info("Processing weather request")
+    logger.debug(f"Raw input: {query}")
+
+    inital_weather = is_weather_request(query)
+
+    if not inital_weather.is_weather_request or inital_weather.confidence_score < 0.7:
+        logger.warning(
+            f"Gate check failed - is_weather_request: {inital_weather.is_weather_request}, confidence: {inital_weather.confidence_score:.2f}"
+        )
+        return None
+
+    logger.info("Gate check passed, proceeding with processing")
+
+    weather_details = weather_details(inital_weather.description)
+    response = weather_response(weather_details)
+
+    logger.info("Weather request processing completed successfully")
+    return response
 
 
 system_prompt = """
-You are a research assistant that will help generate a research paper. 
-Answer the user query and use neccessary tools.
+You are an assistant that will help answer the user query and use neccessary tools.
 """
 
 agent = create_agent(
-    model=local_llm,
-    tools=[web_search, wiki_search, save_txt_note, get_weather],
+    model=cloud_llm,
+    tools=[get_weather, web_search, wiki_search, save_txt_note],
     system_prompt=system_prompt,
-    response_format=ToolStrategy(Union[ResearchRespone, WeatherResponse]),
+    response_format=WeatherResponse,
 )
 response = agent.invoke(
     {
         "messages": [
             {
                 "role": "user",
-                "content": "what is the weather in Spain? Please save to results to a txt file.",
+                "content": "What is the current weather in Barcelona?",
             }
         ]
     }
@@ -119,3 +252,33 @@ structured_response: Union[ResearchRespone, WeatherResponse] = response.get(
     "structured_response"
 )
 print(structured_response)
+print("\n\n")
+print("-" * 50)
+print("\n\n")
+print(response)
+
+
+agent = create_agent(
+    model=local_llm,
+    tools=[get_weather, web_search, wiki_search, save_txt_note],
+    system_prompt=system_prompt,
+)
+response = agent.invoke(
+    {
+        "messages": [
+            {
+                "role": "user",
+                "content": "How many lives in Barcelona according to Wikipedia? Please save to results to a txt file.",
+            }
+        ]
+    }
+)
+
+structured_response: Union[ResearchRespone, WeatherResponse] = response.get(
+    "structured_response"
+)
+print(structured_response)
+print("\n\n")
+print("-" * 50)
+print("\n\n")
+print(response)

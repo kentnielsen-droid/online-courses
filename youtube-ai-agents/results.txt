@@ -1,0 +1,5 @@
+--- Research Output ---
+Timestamp: 2026-02-09 15:35:25
+
+The population of Barcelona is {{result}} according to Wikipedia.
+
