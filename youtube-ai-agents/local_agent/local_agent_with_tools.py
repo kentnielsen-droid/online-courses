@@ -15,7 +15,7 @@ IMAP_USER = os.getenv("IMAP_USER")
 IMAP_PASS = os.getenv("IMAP_PASS")
 IMAP_FOLDER = "INBOX"
 
-CHAT_MODEL: str = "llama3.2:latest"
+CHAT_MODEL: str = "smollm2"
 
 
 class ChatState(TypedDict):
