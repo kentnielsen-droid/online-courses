@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 LOCAL_CHAT_MODEL: str = "qwen3"
-CLOUD_CHAT_MODEL: str = "gemini-3-flash-preview"
+CLOUD_CHAT_MODEL: str = "gemini-2.5-flash-lite"
 
 
 class WeatherRequest(BaseModel):
