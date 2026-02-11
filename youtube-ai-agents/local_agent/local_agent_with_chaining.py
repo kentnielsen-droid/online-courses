@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 from langchain_ollama import ChatOllama
-from langchain.agents.structured_output import ToolStrategy
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.agents import create_agent
 from langchain_community.tools import (
@@ -278,7 +277,3 @@ structured_response: Union[ResearchRespone, WeatherResponse] = response.get(
     "structured_response"
 )
 print(structured_response)
-print("\n\n")
-print("-" * 50)
-print("\n\n")
-print(response)
