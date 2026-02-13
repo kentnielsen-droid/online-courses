@@ -13,7 +13,7 @@ load_dotenv()
 st.set_page_config(page_title="RAG Ingest PDF", page_icon="📄", layout="centered")
 
 
-@st.cache_resource
+# @st.cache_resource
 def get_inngest_client() -> inngest.Inngest:
     return inngest.Inngest(app_id="rag_app", is_production=False)
 
@@ -25,6 +25,14 @@ def save_uploaded_pdf(file) -> Path:
     file_bytes = file.getbuffer()
     file_path.write_bytes(file_bytes)
     return file_path
+
+
+def run_async(coro):
+    loop = asyncio.new_event_loop()
+    try:
+        return loop.run_until_complete(coro)
+    finally:
+        loop.stop()
 
 
 async def send_rag_ingest_event(pdf_path: Path) -> None:
@@ -46,14 +54,15 @@ uploaded = st.file_uploader("Choose a PDF", type=["pdf"], accept_multiple_files=
 if uploaded is not None:
     with st.spinner("Uploading and triggering ingestion..."):
         path = save_uploaded_pdf(uploaded)
-        # Kick off the event and block until the send completes
-        asyncio.run(send_rag_ingest_event(path))
-        # Small pause for user feedback continuity
-        time.sleep(0.3)
+
+        run_async(send_rag_ingest_event(path))
+
+        # time.sleep(0.3)
+
     st.success(f"Triggered ingestion for: {path.name}")
     st.caption("You can upload another PDF if you like.")
 
-st.divider()
+# st.divider()
 st.title("Ask a question about your PDFs")
 
 
@@ -117,7 +126,7 @@ with st.form("rag_query_form"):
     if submitted and question.strip():
         with st.spinner("Sending event and generating answer..."):
             # Fire-and-forget event to Inngest for observability/workflow
-            event_id = asyncio.run(send_rag_query_event(question.strip(), int(top_k)))
+            event_id = run_async(send_rag_query_event(question.strip(), int(top_k)))
             # Poll the local Inngest API for the run's output
             output = wait_for_run_output(event_id)
             answer = output.get("answer", "")
