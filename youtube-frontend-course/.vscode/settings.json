@@ -1,0 +1,16 @@
+{
+  // Prettier formats only HTML, CSS, and JS in this project — and only here,
+  // because this settings file is scoped to the youtube-frontend-course folder.
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  }
+}

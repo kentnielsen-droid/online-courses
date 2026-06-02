@@ -7,6 +7,9 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import silhouette_score
 from sklearn.cluster import KMeans, AgglomerativeClustering
+from pathlib import Path
+
+DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 
 # hashed_passwords = stauth.Hasher(['marketing', 'datascience']).generate()
 # st.write(hashed_passwords)
@@ -30,9 +33,7 @@ name, authenticator_status, username = authenticator.login("Login", "sidebar")
 
 @st.cache_data
 def read_data():
-    df = pd.read_csv(
-        "/Users/dkengineer/Code/online-courses/udemy-deploy-ml-models-with-streamlit/data/segmentation_data.csv"
-    )
+    df = pd.read_csv(DATA_DIR / "segmentation_data.csv")
     return df
 
 

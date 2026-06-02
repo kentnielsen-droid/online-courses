@@ -9,7 +9,8 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 
-URL = "/Users/dkengineer/Code/online-courses/udemy-deploy-ml-models-with-streamlit/data/car_data.csv"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+URL = PROJECT_ROOT / "data" / "car_data.csv"
 
 
 @st.cache_data
@@ -26,7 +27,7 @@ if "prediction" not in st.session_state:
 # Function to load the model (use caching)
 @st.cache_resource
 def train_model(df: pd.DataFrame, _pipe: Pipeline):
-    file_path = "/Users/dkengineer/Code/online-courses/udemy-deploy-ml-models-with-streamlit/models/car_model.joblib"
+    file_path = PROJECT_ROOT / "models" / "car_model.joblib"
     if not Path(file_path).exists():
         encoded_df = df.copy()
         X = encoded_df.drop(["price"], axis=1)

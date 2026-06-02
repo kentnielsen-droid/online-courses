@@ -1,11 +1,14 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+from pathlib import Path
+
+DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 
 URL = "https://raw.githubusercontent.com/marcopeix/MachineLearningModelDeploymentwithStreamlit/master/12_dashboard_capstone/data/quarterly_canada_population.csv"
 
 df = pd.read_csv(
-    "/Users/dkengineer/Code/online-courses/udemy-deploy-ml-models-with-streamlit/data/quarterly_population_canada.csv",
+    DATA_DIR / "quarterly_population_canada.csv",
     dtype={
         "Quarter": str,
         "Canada": np.int32,

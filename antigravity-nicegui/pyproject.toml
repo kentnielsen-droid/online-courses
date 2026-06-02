@@ -1,0 +1,11 @@
+[project]
+name = "antigravity-nicegui"
+version = "0.1.0"
+description = "NiceGUI portfolio / demo app"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "nicegui",
+    "pandas",
+    "plotly",
+]

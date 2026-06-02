@@ -1,5 +1,8 @@
 import streamlit as st
 import pandas as pd
+from pathlib import Path
+
+DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 
 # Sidebar
 with st.sidebar:
@@ -24,7 +27,7 @@ with col3:
 st.divider()
 
 # Tabs
-df = pd.read_csv("/Users/dkengineer/Code/online-courses/udemy-deploy-ml-models-with-streamlit/data/sample_data.csv")
+df = pd.read_csv(DATA_DIR / "sample_data.csv")
 tab1, tab2 = st.tabs(["Line plot", "Bar plot"])
 with tab1:
     st.header("Line plot")

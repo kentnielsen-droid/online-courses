@@ -1,5 +1,8 @@
 import streamlit as st
 import pandas as pd
+from pathlib import Path
+
+DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 
 # Buttons
 primary_button = st.button(label="Primary Button", type="primary")
@@ -17,9 +20,7 @@ if checkbox:
 st.divider()
 
 # Radio Buttons
-df = pd.read_csv(
-    "/Users/dkengineer/Code/online-courses/udemy-deploy-ml-models-with-streamlit/data/sample_data.csv"
-)
+df = pd.read_csv(DATA_DIR / "sample_data.csv")
 radio = st.radio(
     label="Select an option:", options=df.product_category.unique(), horizontal=True
 )

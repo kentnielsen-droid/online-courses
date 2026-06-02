@@ -1,6 +1,9 @@
 import streamlit as st
 import time
 import pandas as pd
+from pathlib import Path
+
+DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 
 
 # Cache the data for ttl seconds
@@ -12,9 +15,7 @@ def ttl_func():
 
 @st.cache_data(max_entries=10)
 def max_entries_func():
-    df = pd.read_csv(
-        "/Users/dkengineer/Code/online-courses/udemy-deploy-ml-models-with-streamlit/data/quarterly_population_canada.csv"
-    )
+    df = pd.read_csv(DATA_DIR / "quarterly_population_canada.csv")
     st.write(df)
 
 @st.cache_data(show_spinner="Performing very complex tasks!")
