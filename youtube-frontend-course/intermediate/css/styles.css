@@ -1,0 +1,174 @@
+@import url("https://mshaugh.github.io/nerdfont-webfonts/build/firacode-nerd-font.css");
+
+/* NOTE: that we would never use "px" to set width or height values 
+  as these are static and does no work well for cross-devices */
+/* we can use "vw" or optionally ("%") to set width values */
+/* we can use "vh" or optionally ("%") to set height values */
+/* we can optionally use "px" as an exception to set max-width (maybe also min-height */
+
+/* NOTE: All elements follow the box model which describes the layers: 
+  content (kernel) --> padding (layer 1) --> border (layer 2) --> margin (layer 3) */
+
+/* NOTE: Display has 2 popular values: Block and Inline.
+  Block takes up 100% of available width and pushes content to a new line
+  <p>, <h*>, and <div> are all elements that default to display block. 
+  Inline only utilizes needed width and does therefore not start on a new line
+  <a>, <span>, and <button> are all elements that default to display inline
+  additionally, width and height can not be set for inline display elements*/
+
+/* NOTE: Position has 5 popular values: Static (default), Relative, Absolute, Fixed, Sticky
+  Static: follows the natural flow of the page 
+  Relative: does the same as Static, but adds the option to move elements using top, right, bottom, left
+  Absolute: changes the base position to the relative to its parent, 
+    however, only if parent has set the position to be not static e.g. relative
+    else the element defaults to viewport/screen and does not care about parents.
+    Width is changed to only fit content regardless of display is set to block. 
+    We can also modify the position using top, right, bottom, and left.
+    Lastly, other elements ignores this element resulting in potential overlap 
+  Fixed: is a position that ignores all elements and sticks to the screen regardless of scrolling 
+  Sticky: is a position that behaves like relative when in view 
+    and changes to position fixed when scrolling to and past the element */
+
+/* NOTE: We can use @media to add responseiveness to the website for cross-device use e.g. @media (max-width: 480px){}
+   Popular values are:
+    480px for small smartphones
+    640px for large smartphones
+    768px for tablets
+    1024px for laptops
+    1280px for desktops */
+
+/* NOTE: We can use pseudo-classes with the : operator e.g. button:hover */
+
+/* NOTE: We can make CSS animations using the @keyframes followed by a name e.g. @keyframes cooleffectname{} */
+
+/* NOTE: The naming convention for classes is called BEM (Block Element Modifier) */
+
+:root {
+  --bg: #0f172a;
+  --fg: #f8fafc;
+  --accent: #38bdf8;
+}
+
+* {
+  /* box-sizing determines how the dimensions of each element is computed.
+    E.g. for width=200px, then when value is border-box the sum of all layers, not including layer 3 (margin), is 200px wide
+    when value is content box then the kernel layer is 200px wide and the sum of all layers is >=200px wide */
+  box-sizing: border-box;
+  /* Sans-serif is almost browser agnostic */
+  font-family:
+    "FiraCode Nerd Font", "Courier New", Courier, monospace, sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  /* display: grid; */
+  place-items: center;
+  background: var(--bg);
+  color: var(--fg);
+  height: 150vh;
+}
+
+main {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+button {
+  margin-top: 1rem;
+  padding: 0.6rem 0.6rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 300ms;
+  justify-content: center;
+  display: flex;
+}
+
+button:hover {
+  opacity: 70%;
+}
+
+button:active {
+  transform: scale(0.9);
+}
+
+.parent-1 {
+  position: sticky;
+  height: 20vh;
+  top: 0;
+}
+
+.child-1 {
+  position: absolute;
+  max-width: 100px;
+  max-height: 100px;
+  top: 0;
+  right: 0;
+  margin: 0;
+}
+.parent-2 {
+  position: relative;
+  height: 20vh;
+}
+
+.child-2 {
+  position: absolute;
+  max-width: 100px;
+  max-height: 100px;
+  top: 0;
+  right: 0;
+  margin: 0;
+}
+
+div {
+  width: 100vw;
+  max-width: 800px;
+  background-color: #38bdf8;
+  color: #0f172a;
+
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+
+  border: 4px dashed black;
+  padding: 16px;
+  margin: 32px;
+}
+
+/* Styles are applied by specificity order e.g. classes are more specific that generic tags like "p" */
+/* The order is generics --> classes --> IDs */
+.p1 {
+  color: red;
+}
+
+#p1 {
+  color: bisque;
+}
+
+p {
+  color: #0f172a;
+}
+
+@media (max-width: 480px) {
+  p {
+    font-size: xx-small;
+  }
+}
+
+h1 {
+  transform: scale(1);
+  animation: heartbeat 1000ms infinite alternate-reverse;
+}
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.15);
+  }
+}
